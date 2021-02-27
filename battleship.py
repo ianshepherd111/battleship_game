@@ -145,7 +145,6 @@ def placeShipOnShipGrid(ship_length, ship_no, ship_grid):
                 ship_placed = True
 
 
-
 def setupGame(rows, cols, ship_health):
 #TODO
     #Initiate grid of targets and a matching grid of 0's waiting for ships to be added
@@ -160,19 +159,18 @@ def setupGame(rows, cols, ship_health):
         placeShipOnShipGrid(ship_length, ship_no, shipgrid)
 
     ship_count = len(ship_health) #set number of ships at start of game
-    shot_outcome_string="" #set as empty for the first loop
 
-    return targetgrid, shipgrid, ship_count, shot_outcome_string
-
+    return targetgrid, shipgrid, ship_count
 
 
 def getUserInput():
     """Ask the player to input a target."""
 
-    return input("\nPlease enter coordinates for a target(e.g. H5):\n").upper()
+    return input("\nPlease enter coordinates for a target:\n").upper()
+
 
 def checkUserInput(user_input, target_grid):
-
+#TODO
     if user_input == "x" or user_input == "-":
         return False
 
@@ -183,31 +181,6 @@ def checkUserInput(user_input, target_grid):
                     return True
         else:
             return False
-
-
-# def getTarget(targetgrid):
-# #TODO    """Check target is valid"""
-#
-#     valid_target = False
-#     error_string = "\nTarget not recognized"
-#
-#     while valid_target == False:
-#
-#         user_input = getUserInput()
-#
-#         if user_input == "x" or user_input == "-":
-#             print(error_string)
-#
-#         else:
-#             for row in targetgrid:
-#                 for target in row:
-#                     if target == user_input:
-#                         valid_target = True
-#                         indices = [targetgrid.index(row), row.index(target)]
-#                         return indices
-#             else:
-#                 print(error_string)
-#
 
 
 def fireAtTarget(user_input, target_grid, ship_grid, ship_health, ship_count):
@@ -249,10 +222,10 @@ def fireAtTarget(user_input, target_grid, ship_grid, ship_health, ship_count):
 if __name__ == "__main__":
 #TODO
 
-    rows, cols = 4, 5
+    rows, cols = 10, 10
     ship_health = [5, 4, 4]
 
-    targetgrid, shipgrid, ship_count, shot_outcome_string = setupGame(rows, cols, ship_health)
+    targetgrid, shipgrid, ship_count = setupGame(rows, cols, ship_health)
 
 
     # Game loop
@@ -266,17 +239,17 @@ if __name__ == "__main__":
         displayGrid(targetgrid)
         print("Ships remaining: " + str(ship_count))
 
-        valid_target = False
-        while valid_target == False:
-            user_input = getUserInput()
-            valid_target = checkUserInput(user_input, targetgrid) #True if input matches a target
-            if valid_target == False: #Display error string to player if invalid target provided
-                print("\nTarget not recognized")
+        user_input = getUserInput()
+        valid_target = checkUserInput(user_input, targetgrid) #Check the player provides a valid target
 
-        shot_outcome_string, ship_count = fireAtTarget(user_input, targetgrid, shipgrid, ship_health, ship_count)
+        if valid_target == True: #If the player provides a valid target fire at it
+            shot_outcome_string, ship_count = fireAtTarget(user_input, targetgrid, shipgrid, ship_health, ship_count)
+            print(shot_outcome_string)
+
+        else: #Display error string to player if invalid target provided
+            print("\nTarget not recognized. Please enter a target from the grid below:\n")
 
 
     #End the game once all ships have been sunk:
-    print(shot_outcome_string)
     displayGrid(targetgrid)
     print("\nCongratulations!\nAll ships destroyed")

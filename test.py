@@ -1,10 +1,5 @@
-#import importlib
 import random
-
 import battleship
-
-#game_code = "battleship"
-#battleship = importlib.import_module(game_code)
 
 def debugSetupShipGrid(rows, cols, ship_health):
 #TODO
@@ -19,7 +14,6 @@ def debugSetupShipGrid(rows, cols, ship_health):
         battleship.placeShipOnShipGrid(ship_length, ship_no, shipgrid)
 
     return shipgrid
-
 
 
 def debugCheckShipPlacer(rows, cols, runs):
@@ -98,6 +92,7 @@ def generateTargetList(targetgrid):
 
     return(target_list)
 
+
 def getRandomTargetFromTargetList(target_list):
     """Randomly select an element from the target list, store the element in a temporary variable,
      delete that element from the target list, then return the element stored in the temporary variable.
@@ -107,18 +102,6 @@ def getRandomTargetFromTargetList(target_list):
     string = target_list[index]
     del target_list[index]
     return string
-
-
-# def generateTarget(targetgrid, target_list):
-# #TODO
-#
-#         user_input = getRandomTargetFroTargetList(target_list)
-#
-#         for row in targetgrid:
-#             for target in row:
-#                 if target == user_input:
-#                     indices = [targetgrid.index(row), row.index(target)]
-#                     return indices
 
 
 #Autorun game
@@ -133,7 +116,7 @@ def debugTestGame(test_no):
 
         ship_health = [5, 4, 4]
 
-        targetgrid, shipgrid, ship_count, shot_outcome_string = battleship.setupGame(rows, cols, ship_health)
+        targetgrid, shipgrid, ship_count = battleship.setupGame(rows, cols, ship_health)
 
         target_list = generateTargetList(targetgrid)
 
@@ -164,18 +147,6 @@ def debugTestGame(test_no):
         print("All test games completed successfully")
 
 
-# def getSequentialTargetFromList(target_list):
-#
-# #TODO    """Store the first element in a temporary variable,
-#     # delete that element from the target list, then return the element stored in the temporary variable.
-#     #
-#     # """
-#     string = target_list[0]
-#     del target_list[0]
-#     return string
-
-
-
 def testInputHandling():
 #TODO
 
@@ -188,11 +159,9 @@ def testInputHandling():
     rows, cols = 10, 10
     ship_health = [5, 4, 4]
 
+    targetgrid, shipgrid, ship_count = battleship.setupGame(rows, cols, ship_health)
+
     count = 0
-
-    targetgrid, shipgrid, ship_count, shot_outcome_string = battleship.setupGame(rows, cols, ship_health)
-
-    #TODO do
 
 
     for user_input in input_strings_to_test:
@@ -204,12 +173,13 @@ def testInputHandling():
             shot_outcome_string, ship_count = battleship.fireAtTarget(user_input, targetgrid, shipgrid, ship_health, ship_count)
 
 
-    if count == 5:
+    if count == 5: #5 inputs should be recognized as valid targets
         print("String input test completed successfully")
     else:
          print("Input test error")
 
 
+#TODO
 
 testInputHandling()
 

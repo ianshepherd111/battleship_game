@@ -159,27 +159,26 @@ def placeShipInGrid(origin_y, origin_x, dir_vector, ship_length, ship_no, ship_g
         ship_grid[y_coord][x_coord] = ship_no
 
 
-def addShipToShipGrid(ship_length, ship_no, ship_grid):
+def addShipToShipGrid(ship_length, ship_no, ship_grid, single_direction_bool):
+    """Add a ship to the ship grid. single_direction_bool determines which algorithm to use when placing the ship
 
-    """Add a ship to the ship grid.
-
-    Before placing the ship check:
-    1) That the origin position is clear
-    2) Select a direction and check:
-    a) That the ship fits in the grid
-    b) That the ship doesn't overlap with another ship
-    If proposed ship placement passes the above conditions ->
-    Place the ship by updating the values of the ship grid
-
-    If the proposed ship placement does not pass conditions 1, 2a and 2b ->
-    Select a new origin and direction to check
-
-    Continue generating origins and directions until the ship can be added to the grid.
+    Until the ship has been placed on the grid loop through the following steps:
+    1) Select random squares on the grid until find an unoccupied one
+    2) Select a random direction from that square
+        a) Check that the ship fits in the grid in that direction
+        b) Check that the proposed ship placement doesn't overlap with another ship
+    3) If ship fits in the grid and doesn't overlap -> place the ship
+    4) Otherwise:
+        For the single direction algorithm: Go back to step 1 and select a new random square
+        (Do step 2 for a single direction before selecting a new random square)
+        For the multiple direction algorithm: Go back to step 2 and try another direction
+        If all 4 directions have been tried without being able to place the ship,
+        go back to step 1 and select a new random square
+        (Do step 2 for all 4 possible directions before selecting a new random square)
     """
 
     rows = len(ship_grid)
     cols = len(ship_grid[0])
-
 
     ship_placed_bool = False
     while (ship_placed_bool == False): #Loop until ship is successfully placed on the grid
@@ -187,35 +186,47 @@ def addShipToShipGrid(ship_length, ship_no, ship_grid):
         #pick an empty square of the grid randomly as the origin
         origin_x, origin_y = getCoordsRandomEmptySquare(ship_grid, rows, cols)
 
-        # use numbers 1-4 as directions and select a random direction
-        direction = random.randrange(1,5)
+        dir_list = [1,2,3,4] #Use numbers 1-4 to represent directions
+        random.shuffle(dir_list) # Shuffle directions list to get a random direction
 
-        #check if ship fits into grid in that direction
-        grid_fit_bool = checkGridFit(direction, origin_x, origin_y, ship_length, cols, rows)
+        if single_direction_bool == True:
+            direction_max = 1 #Try placing the ship in only one direction
+        else:
+            direction_max = 4 #Try placing the ship for all 4 directions if necessary
 
-        if grid_fit_bool == True:
+        direction_count = 0
 
-            # set the vector values for that direction
-            dir_vector = getDirectionVector(direction)
+        #Loop through the directions until reaching the maximum number of directions for the algorithm chosen
+        #If ship has already been placed don't try to place again
+        while direction_count < direction_max and ship_placed_bool == False:
 
-            #check if proposed coordinates for ship overlap with an already present ship
-            space_for_new_ship_bool = shipOverlapCheck(origin_y, origin_x, dir_vector, ship_length, ship_grid)
+            dir = dir_list[direction_count] #Get random direction for this loop
+            direction_count += 1
 
-            #If all squares are clear place ship in the grid
-            if space_for_new_ship_bool == True:
-                placeShipInGrid(origin_y, origin_x, dir_vector, ship_length, ship_no, ship_grid)
-                ship_placed_bool = True
+            #check if ship fits into grid in that direction
+            grid_fit_bool = checkGridFit(dir, origin_x, origin_y, ship_length, cols, rows)
+
+            if grid_fit_bool == True:
+
+                # set the vector values for that direction
+                dir_vector = getDirectionVector(dir)
+
+                #check if proposed coordinates for ship overlap with an already present ship
+                space_for_ship_bool = shipOverlapCheck(origin_y, origin_x, dir_vector, ship_length, ship_grid)
+
+                #If all squares are clear place ship in the grid
+                if space_for_ship_bool == True:
+                    placeShipInGrid(origin_y, origin_x, dir_vector, ship_length, ship_no, ship_grid)
+                    ship_placed_bool = True
 
 
-
-def setupGame(rows, cols, ship_health):
+def setupGame(rows, cols, ship_health, algorithm_bool):
     """Initiate the variables needed for the game
 
     1) Create the target grid
     2) Create an empty ship grid
     3) Place ships into ship grid
     4) Return the target grid, the ship grid and the number of ships in the grid
-
     """
 
     #Initiate grid of targets and a matching grid of 0's waiting for ships to be added
@@ -227,7 +238,7 @@ def setupGame(rows, cols, ship_health):
     for ship in range(len(ship_health)):
         ship_length = ship_health[ship]
         ship_no = ship+1
-        addShipToShipGrid(ship_length, ship_no, shipgrid)
+        addShipToShipGrid(ship_length, ship_no, shipgrid, algorithm_bool)
 
     ship_count = len(ship_health) #set number of ships at start of game
 
@@ -237,7 +248,7 @@ def setupGame(rows, cols, ship_health):
 def getUserInput():
     """Ask the player to input a target."""
 
-    return input("\nPlease enter coordinates for a target:\n").upper()
+    return input("\nPlease enter coordinates for a target:\n").upper().strip()
 
 
 def checkUserInput(user_input, target_grid):
@@ -300,30 +311,16 @@ def fireAtTarget(user_input, target_grid, ship_grid, ship_health, ship_count):
     return outcome_string, ship_count
 
 
+def gameLoop(targetgrid, shipgrid, ship_count, ship_health):
+    """The battleship game loop. Run until all ships are destroyed
 
-#
-#
-# Battleship program
-#
-#
-
-#If launched as main program play a game of battleship
-if __name__ == "__main__":
-
-
-    # Set up the game
-    rows, cols = 10, 10
-    ship_health = [5, 4, 4]
-    targetgrid, shipgrid, ship_count = setupGame(rows, cols, ship_health)
-
-
-    # Game loop
-    # While at least one ship is afloat:
-    #1) Show target grid and number of ships remaining
-    #2) Request a target
-    #3) a) If user provides a valid target then:
-    #      fire at the target and tell the player the outcome of their shot
-    # 3) b) Otherwise inform the player that their target was not recognized
+    While at least one ship is afloat:
+    1) Show target grid and number of ships remaining
+    2) Request a target
+    3) a) If user provides a valid target then:
+         fire at the target and tell the player the outcome of their shot
+    3) b) Otherwise inform the player that their target was not recognized
+    """
 
     while ship_count > 0:
         displayGrid(targetgrid)
@@ -339,6 +336,24 @@ if __name__ == "__main__":
         else: #Display error string to player if invalid target provided
             print("\nTarget not recognized. Please enter a target from the grid below:\n")
 
+
+#
+#
+# Battleship program
+#
+#
+
+#If launched as main program play a game of battleship
+if __name__ == "__main__":
+
+    # Set up the game
+    rows, cols = 6, 4
+    ship_health = [5, 4, 4]
+    single_direction_algorithm = False #switches algorithm for ship placement
+    targetgrid, shipgrid, ship_count = setupGame(rows, cols, ship_health, single_direction_algorithm)
+
+    # Play game until all ships are destroyed
+    gameLoop(targetgrid, shipgrid, ship_count, ship_health)
 
     #End the game once all ships have been sunk:
     displayGrid(targetgrid)

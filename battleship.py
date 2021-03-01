@@ -163,7 +163,7 @@ def addShipToShipGrid(ship_length, ship_no, ship_grid, single_direction_bool):
     """Add a ship to the ship grid. single_direction_bool determines which algorithm to use when placing the ship
 
     Until the ship has been placed on the grid loop through the following steps:
-    1) Select random squares on the grid until find an unoccupied one
+    1) Select random squares on the grid until an unoccupied one is found
     2) Select a random direction from that square
         a) Check that the ship fits in the grid in that direction
         b) Check that the proposed ship placement doesn't overlap with another ship
@@ -347,7 +347,7 @@ def gameLoop(targetgrid, shipgrid, ship_count, ship_health):
 if __name__ == "__main__":
 
     # Set up the game
-    rows, cols = 6, 4
+    rows, cols = 10, 10
     ship_health = [5, 4, 4]
     single_direction_algorithm = False #switches algorithm for ship placement
     targetgrid, shipgrid, ship_count = setupGame(rows, cols, ship_health, single_direction_algorithm)

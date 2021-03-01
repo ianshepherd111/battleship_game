@@ -31,10 +31,10 @@ Both algorithms place ships similarly with several common steps. The difference 
 Until the ship has been placed on the grid loop through the following steps:
 
 1. Select random squares on the grid until an unoccupied one is found
-2. Select a random direction from that square
-    a) Check that the ship fits in the grid in that direction
-    b) Check that the proposed ship placement doesn't overlap with another ship
-3. If ship fits in the grid and doesn't overlap -> place the ship
+2. Select a random direction from that square, then:
+    * a) Check that the ship fits in the grid in that direction
+    * b) Check that the proposed ship placement doesn't overlap with another ship
+3. If the ship fits in the grid and doesn't overlap -> place the ship
 4. Otherwise:
     * For the single direction algorithm:
         Go back to step 1 and select a new random square

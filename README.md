@@ -1,5 +1,5 @@
-# battleship_game
-Python project to build a simple battleship game
+# Battleship game
+Python project to build a battleship game
 
 
 ## The specifications of the battleship game:
@@ -46,22 +46,20 @@ Until the ship has been placed on the grid loop through the following steps:
 
 ### Advantages and Disadvantages
 
-#### Advantages of the multiple direction algorithm:
-More even ship distribution across the grid
-
-#### Disadvantages of the multiple direction algorithm: 
-Ships more frequently occupy squares slightly away from the corners - more easily seen on a 15 x 15 grid
-
-
-#### Advantages of the single direction algorithm:
-Corner artefacts of the multiple direction algorithm aren't present
-
-#### Disadvantages of the single direction algorithm:
-Less frequently places ships in the corner
+Algorithm | Multiple direction | Single direction
+------------ | -------------|------------
+Advantages | More even ship distribution across the grid | Corner artefacts of the multiple direction algorithm aren't present
+Disadvantages | Has corner artefacts where ships more frequently occupy squares slightly away from the edges and corners - more easily seen on the 15 x 15 heatmap below | Places ships in the corner areas slightly less frequently
 
 
+
+## Heatmaps of ship placement
+
+The heatmaps show the relative distribution of ships after placing the 3 ships in the grid 100000 times. The numbers in the grids have been rounded to make the relative distribution clearer
 
 ### 10 x 10 Grid heatmap of ship distributions
+
+
 
 #### The multiple direction algorithm
 ![Ship heatmap for the multi direction algorithm](10x10_mda.png)

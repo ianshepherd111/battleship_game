@@ -64,7 +64,7 @@ def normalizeSumGrid(sumgrid, division_factor):
 
     for i in range(rows):
         for j in range(cols):
-            sumgrid[i][j] = sumgrid[i][j] // division_factor
+            sumgrid[i][j] = round(sumgrid[i][j] / division_factor)
 
 
 def printNormalizedShipDistribution(rows, cols, runs, ship_health, factor, sumgrid):
@@ -221,7 +221,7 @@ def testInputHandling():
 
     rows, cols = 10, 10
     ship_health = [5, 4, 4]
-    single_direction_algorithm = True
+    single_direction_algorithm = False
 
     targetgrid, shipgrid, ship_count = battleship.setupGame(rows, cols, ship_health, single_direction_algorithm)
 
@@ -254,7 +254,7 @@ def runtests(algorithm_bool):
     rows, cols = 10, 10
     ship_health = [5, 4, 4]
     debugCheckShipDistribution(rows, cols, 100000, ship_health, algorithm_bool)
-    #debugCheckShipDistribution(15, 15, 100000, ship_health, algorithm_bool)
+    # debugCheckShipDistribution(15, 15, 100000, ship_health, algorithm_bool)
 
 
 #If launched as main program run the tests
@@ -263,7 +263,6 @@ if __name__ == "__main__":
     testInputHandling()
 
     print("Running tests for multiple direction per origin ship placement algorithm")
-
     single_direction_algorithm = False
     runtests(single_direction_algorithm)
 
